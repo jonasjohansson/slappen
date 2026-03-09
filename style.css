@@ -172,6 +172,14 @@ main {
   line-height: 1.4;
 }
 
+.route-title {
+  padding: 8px 14px 4px;
+  font-size: 0.75rem;
+  color: #6b6b80;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 /* Route card */
 #route-card {
   max-width: 500px;
@@ -256,7 +264,6 @@ main {
 
 /* Line header elements */
 .line-name {
-  cursor: pointer;
   font-family: 'SL Gothic Display', 'SL Gothic', sans-serif;
   font-weight: 700;
 }
@@ -275,6 +282,14 @@ main {
 
 .line-input::placeholder {
   color: rgba(255, 255, 255, 0.5);
+}
+
+.line-input.input-error {
+  color: #ef4444;
+}
+
+.line-input.input-error::placeholder {
+  color: #ef4444;
 }
 
 .line-ok {

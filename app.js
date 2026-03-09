@@ -1,6 +1,6 @@
 /* ---- Config ---- */
 
-const EMPTY_LINE = { lineId: null, lineName: null, color: '#555', url: null, from: null };
+const EMPTY_LINE = { lineId: null, lineName: null, color: '#555', url: null, from: null, to: null };
 
 const MAX_LINES = 6;
 
@@ -183,7 +183,7 @@ async function refreshRoute() {
           return { journey: j, dep, duration: arr - dep };
         })
         .filter((x) => x.dep >= now)
-        .sort((a, b) => a.duration - b.duration)
+        .sort((a, b) => a.dep - b.dep)
         .slice(0, 3)
         .map((x) => x.journey);
       tripsHtml = sorted.length
@@ -196,6 +196,7 @@ async function refreshRoute() {
 
   routeCardEl.innerHTML = `
     <div class="route-card">
+      <div class="route-title">Reseplanerare</div>
       <div class="stop-header" style="background:#555">
         <span class="route-pick" data-field="origin">${esc(originLabel)}</span>
         <span class="route-swap" id="route-swap">⇄</span>
@@ -226,6 +227,7 @@ async function refreshRoute() {
   });
 
   document.getElementById('route-clear')?.addEventListener('click', () => {
+    if (!confirm('Ta bort resväg?')) return;
     config.route = { origin: '', destination: '' };
     saveConfig(config);
     refresh();
@@ -338,8 +340,8 @@ async function fetchLine(line) {
   ]);
 
   // Keep departures separate per station, take top 3 from each
-  const fromDeps = (fromResult.status === 'fulfilled' ? fromResult.value : []).slice(0, 3);
-  const toDeps = (toResult.status === 'fulfilled' ? toResult.value : []).slice(0, 3);
+  const fromDeps = (fromResult.status === 'fulfilled' ? fromResult.value : []).slice(0, MAX_DEPARTURES);
+  const toDeps = (toResult.status === 'fulfilled' ? toResult.value : []).slice(0, MAX_DEPARTURES);
 
   // Tag with override destination
   const toName = cleanStopName(line.to.name);
@@ -470,9 +472,8 @@ function applyLineMatch(index, match) {
 
 /* ---- Station selection (search modal) ---- */
 
-let searchDebounceTimer = null;
-
 function showStationSearch(index, field) {
+  let searchDebounceTimer = null;
   const overlay = document.createElement('div');
   overlay.className = 'search-overlay';
 
@@ -498,6 +499,7 @@ function showStationSearch(index, field) {
   function close() {
     if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
     overlay.remove();
+    document.removeEventListener('keydown', onKey);
   }
 
   // Close on overlay click (but not box click)
@@ -507,10 +509,7 @@ function showStationSearch(index, field) {
 
   // Close on Escape
   function onKey(e) {
-    if (e.key === 'Escape') {
-      close();
-      document.removeEventListener('keydown', onKey);
-    }
+    if (e.key === 'Escape') close();
   }
   document.addEventListener('keydown', onKey);
 
@@ -612,16 +611,6 @@ async function refresh() {
 
   departuresEl.innerHTML = html.join('');
 
-  // Attach line-name click handlers (re-enter line number)
-  departuresEl.querySelectorAll('.line-name').forEach((el) => {
-    el.addEventListener('click', () => {
-      const idx = parseInt(el.dataset.index, 10);
-      // Reset line to show input again
-      config.lines[idx] = { ...EMPTY_LINE };
-      saveConfig(config);
-      refresh();
-    });
-  });
 
   // Click header to focus input
   departuresEl.querySelectorAll('.stop-header').forEach((header) => {
@@ -646,7 +635,11 @@ async function refresh() {
         const val = input.value.trim();
         if (!val || !allSLLines) return;
         const match = allSLLines.find((l) => l.designation === val);
-        if (!match) return;
+        if (!match) {
+          input.classList.add('input-error');
+          setTimeout(() => input.classList.remove('input-error'), 600);
+          return;
+        }
         applyLineMatch(parseInt(idx, 10), match);
       }
     });
@@ -660,7 +653,11 @@ async function refresh() {
       const val = input?.value.trim();
       if (!val || !allSLLines) return;
       const match = allSLLines.find((l) => l.designation === val);
-      if (!match) return;
+      if (!match) {
+        input?.classList.add('input-error');
+        setTimeout(() => input?.classList.remove('input-error'), 600);
+        return;
+      }
       applyLineMatch(idx, match);
     });
   });
