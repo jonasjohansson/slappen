@@ -1,0 +1,124 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  background: #0a0a1a;
+  color: #e8e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* Hide scrollbar */
+body {
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+header {
+  text-align: center;
+  padding: 24px 16px 8px;
+}
+
+header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.updated {
+  font-size: 0.75rem;
+  color: #6b6b80;
+  margin-top: 4px;
+}
+
+main {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 8px 16px 24px;
+}
+
+.stop-section {
+  background: #141428;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.stop-header {
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.departure-row {
+  display: flex;
+  align-items: center;
+  padding: 8px 14px;
+  gap: 10px;
+}
+
+.departure-row + .departure-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.line-badge {
+  min-width: 36px;
+  padding: 2px 8px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #fff;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.destination {
+  flex: 1;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time {
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+  color: #e8e8f0;
+  flex-shrink: 0;
+}
+
+.time.now {
+  color: #22c55e;
+  font-weight: 700;
+}
+
+.no-departures {
+  padding: 12px 14px;
+  color: #6b6b80;
+  font-size: 0.85rem;
+}
+
+.error-message {
+  text-align: center;
+  color: #6b6b80;
+  padding: 32px 16px;
+  font-size: 0.85rem;
+}
