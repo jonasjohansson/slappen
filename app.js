@@ -593,7 +593,11 @@ function updateTimestamp() {
 updateGPS();
 fetchAllLines();
 
+let refreshing = false;
+
 async function refresh() {
+  if (refreshing) return;
+  refreshing = true;
   updateGPS();
   const [, ...lineResults] = await Promise.allSettled([
     refreshRoute(),
@@ -654,11 +658,6 @@ async function refresh() {
       if (!val || !allSLLines) return;
       const match = allSLLines.find((l) => l.designation === val);
       if (!match) return;
-      const alreadyUsed = config.lines.some((l, i) => i !== idx && l.lineId === match.id);
-      if (alreadyUsed) {
-        alert(`Linje ${val} används redan.`);
-        return;
-      }
       applyLineMatch(idx, match);
     });
   });
@@ -685,6 +684,7 @@ async function refresh() {
   });
 
   updateTimestamp();
+  refreshing = false;
 }
 
 refresh();
