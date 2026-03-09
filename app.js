@@ -5,6 +5,7 @@ const LINES = [
   {
     name: '206',
     color: '#1e6bc9',
+    url: 'https://sl.linjetidtabeller.se/?line=206',
     sources: [
       { id: 2070, lines: [206], stop: 'Larsberg' },
       { id: 9220, lines: [206], directions: [1], stop: 'Ropsten' },
@@ -13,6 +14,7 @@ const LINES = [
   {
     name: '21',
     color: '#7b4fa0',
+    url: 'https://sl.linjetidtabeller.se/?line=21',
     sources: [
       { id: 9249, lines: [21], directions: [2], stop: 'Larsberg', dest: 'Ropsten' },
     ],
@@ -20,6 +22,7 @@ const LINES = [
   {
     name: '80',
     color: '#00a4b7',
+    url: 'https://sl.linjetidtabeller.se/?line=80',
     sources: [
       { id: 9255, lines: [80], directions: [2], stop: 'Dalénum', dest: 'Nacka Strand' },
       { id: 1442, lines: [80], directions: [1], stop: 'Saltsjöqvarn' },
@@ -357,7 +360,10 @@ function renderLine({ line, departures }, dimmed) {
 
   return `
     <section class="stop-section${dimmed ? ' dimmed' : ''}">
-      <div class="stop-header"><span class="line-badge" style="background:${line.color}">${esc(line.name)}</span></div>
+      <div class="stop-header">${line.url
+        ? `<a href="${line.url}" target="_blank" class="line-badge" style="background:${line.color}">${esc(line.name)}</a>`
+        : `<span class="line-badge" style="background:${line.color}">${esc(line.name)}</span>`
+      }</div>
       ${rows}
     </section>`;
 }
