@@ -14,15 +14,15 @@ const LINES = [
     name: '21',
     color: '#7b4fa0',
     sources: [
-      { id: 9249, lines: [21], stop: 'Larsberg' },
+      { id: 9249, lines: [21], directions: [2], stop: 'Larsberg', dest: 'Ropsten' },
     ],
   },
   {
     name: '80',
     color: '#00a4b7',
     sources: [
-      { id: 9255, lines: [80], directions: [2], stop: 'Dalénum' },
-      { id: 1442, lines: [80], directions: [1], stop: 'Saltsjöqvarn' },
+      { id: 9255, lines: [80], directions: [2], stop: 'Dalénum', dest: 'Nacka Strand' },
+      { id: 1442, lines: [80], directions: [1], stop: 'Saltsjöqvarn', dest: 'Ropsten' },
     ],
   },
 ];
@@ -83,6 +83,8 @@ function pad(n) { return String(n).padStart(2, '0'); }
 const DESTINATION_NAMES = {
   'Högsätra Larsberg': 'Larsberg',
   'Gåshaga brygga': 'Gåshaga',
+  'Käppala': 'Gåshaga',
+  'Gåshaga Brygga': 'Gåshaga',
 };
 
 function cleanDestination(name) {
@@ -323,7 +325,7 @@ async function fetchSourceDepartures(source) {
     source.lines.includes(dep.line?.id) &&
     (!source.directions || source.directions.includes(dep.direction_code)) &&
     minutesUntil(dep) <= MAX_MINUTES
-  ).map((dep) => ({ ...dep, _stop: source.stop }));
+  ).map((dep) => ({ ...dep, _stop: source.stop, ...(source.dest && { destination: source.dest }) }));
 }
 
 async function fetchLine(line) {
