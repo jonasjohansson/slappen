@@ -360,8 +360,8 @@ function renderLine({ line, departures }, dimmed) {
 
   return `
     <section class="stop-section${dimmed ? ' dimmed' : ''}">
-      <div class="stop-header">
-        <span class="line-badge" style="background:${line.color}">${esc(line.name)}</span>
+      <div class="stop-header" style="background:${line.color}">
+        <span class="line-badge">${esc(line.name)}</span>
         ${line.url ? `<a href="${line.url}" target="_blank" class="timetable-link">(PDF)</a>` : ''}
       </div>
       ${rows}
