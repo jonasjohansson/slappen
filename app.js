@@ -67,6 +67,13 @@ function esc(str) {
 
 function pad(n) { return String(n).padStart(2, '0'); }
 
+function toLocalTime(isoStr) {
+  if (!isoStr) return '';
+  // API returns times without timezone — they're in UTC
+  const d = new Date(isoStr + 'Z');
+  return d.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Stockholm' });
+}
+
 const DESTINATION_NAMES = {
   'Högsätra Larsberg': 'Larsberg',
   'Gåshaga brygga': 'Gåshaga',
@@ -108,7 +115,7 @@ async function fetchBikeBoatRoutes() {
 
   const now = new Date();
   return boats.slice(0, 2).map((boat) => {
-    const scheduled = new Date(boat.scheduled);
+    const scheduled = new Date(boat.scheduled + 'Z');
     const leaveHome = new Date(scheduled.getTime() - BIKE_ROUTE.bikeToBoat * 60000);
     const arrSaltsjoquvarn = new Date(scheduled.getTime() + BIKE_ROUTE.boatTravelTime * 60000);
     const arrWork = new Date(arrSaltsjoquvarn.getTime() + BIKE_ROUTE.bikeFromBoat * 60000);
@@ -147,8 +154,8 @@ function renderJourney(journey) {
   const legs = journey.legs || [];
   const firstDep = legs[0]?.origin?.departureTimePlanned || '';
   const lastArr = legs[legs.length - 1]?.destination?.arrivalTimePlanned || '';
-  const depTime = firstDep.slice(11, 16);
-  const arrTime = lastArr.slice(11, 16);
+  const depTime = toLocalTime(firstDep);
+  const arrTime = toLocalTime(lastArr);
   const totalMin = Math.round(journey.tripDuration / 60);
 
   const legHtml = legs.map(renderLeg).filter(Boolean).join('<span class="route-arrow">→</span>');
@@ -206,7 +213,7 @@ async function refreshRoute() {
     // To work: transit + bike+boat options
     const toWorkRoutes = [];
     for (const j of toWork) {
-      const dep = j.legs?.[0]?.origin?.departureTimePlanned?.slice(11, 16) || '99:99';
+      const dep = toLocalTime(j.legs?.[0]?.origin?.departureTimePlanned) || '99:99';
       toWorkRoutes.push({ type: 'transit', data: j, dep });
     }
     for (const b of bikeToWork) {
@@ -217,7 +224,7 @@ async function refreshRoute() {
     const toHomeRoutes = toHome.map((j) => ({
       type: 'transit',
       data: j,
-      dep: j.legs?.[0]?.origin?.departureTimePlanned?.slice(11, 16) || '99:99',
+      dep: toLocalTime(j.legs?.[0]?.origin?.departureTimePlanned) || '99:99',
     }));
 
     routeCardEl.innerHTML =
