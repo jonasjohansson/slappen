@@ -63,7 +63,7 @@ const CONNECTIONS = {
 
 const API_BASE = 'https://transport.integration.sl.se/v1/sites';
 const MAX_DEPARTURES = 8;
-const MAX_MINUTES = 30;
+const MAX_MINUTES = 60;
 const REFRESH_INTERVAL = 30000;
 
 const departuresEl = document.getElementById('departures');
