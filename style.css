@@ -49,18 +49,23 @@ main {
 .stop-header {
   padding: 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
 }
 
 .stop-header .line-badge {
-  display: block;
-  width: 100%;
   min-width: auto;
   padding: 10px 14px;
   text-align: left;
   font-size: 0.85rem;
   border-radius: 0;
+}
+
+.timetable-link {
+  color: rgba(255, 255, 255, 0.4);
   text-decoration: none;
-  color: inherit;
+  font-size: 0.75rem;
+  margin-left: 8px;
 }
 
 .departure-row {
