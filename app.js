@@ -378,7 +378,7 @@ function renderDeparture(dep) {
 
   let timeHtml;
   if (isNow) {
-    timeHtml = `<span class="time now"${timeColor}>Nu</span><span class="time"${timeColor}>${depClock}</span>`;
+    timeHtml = `<span class="time now">Nu</span><span class="time"${timeColor}>${depClock}</span>`;
   } else {
     timeHtml = `<span class="time-min"${timeColor}>${Math.round(mins)} min</span><span class="time"${timeColor}>${depClock}</span>`;
   }
