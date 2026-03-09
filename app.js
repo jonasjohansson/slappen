@@ -149,7 +149,7 @@ function renderTrip(journey) {
       const lineNum = t?.name?.match(/\d+$/)?.[0] || '';
       const stopName = leg.origin.name?.split(',')[0] || '';
       const time = fmtTime(new Date(leg.origin.departureTimePlanned));
-      return `<span class="route-leg transit" style="background:${color}">${icon} ${lineNum} ${stopName} ${time}</span>`;
+      return `<span class="route-leg transit" style="background:${color}">${lineNum} ${stopName} ${time}</span>`;
     })
     .join('<span class="route-arrow">→</span>');
 
@@ -376,13 +376,30 @@ function renderDeparture(dep) {
 
   // Detect delay: expected vs scheduled
   const isDelayed = dep.expected && dep.scheduled && new Date(dep.expected) > new Date(dep.scheduled);
-  const timeColor = isDelayed ? ' style="color:#f59e0b"' : '';
+
+  // Urgency color based on minutes remaining
+  let urgencyColor;
+  if (isNow) {
+    urgencyColor = '#22c55e'; // green
+  } else if (mins <= 1) {
+    urgencyColor = '#ef4444'; // red
+  } else if (mins <= 5) {
+    urgencyColor = '#f97316'; // orange
+  } else if (mins <= 10) {
+    urgencyColor = '#eab308'; // yellow
+  } else {
+    urgencyColor = null;
+  }
+
+  // Delay overrides urgency color
+  const color = isDelayed ? '#f59e0b' : urgencyColor;
+  const timeStyle = color ? ` style="color:${color}"` : '';
 
   let timeHtml;
   if (isNow) {
-    timeHtml = `<span class="time now">Nu</span><span class="time now">${depClock}</span>`;
+    timeHtml = `<span class="time now"${timeStyle}>Nu</span><span class="time now"${timeStyle}>${depClock}</span>`;
   } else {
-    timeHtml = `<span class="time-min"${timeColor}>${Math.round(mins)} min</span><span class="time"${timeColor}>${depClock}</span>`;
+    timeHtml = `<span class="time-min"${timeStyle}>${Math.round(mins)} min</span><span class="time"${timeStyle}>${depClock}</span>`;
   }
 
   return `
