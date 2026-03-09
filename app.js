@@ -102,24 +102,28 @@ async function fetchConnections() {
     return dep.expected ? new Date(dep.expected) : new Date(dep.scheduled);
   }
 
+  function notCancelled(d) {
+    return d.journey?.state !== 'CANCELLED' && d.state !== 'CANCELLED';
+  }
+
   // Green line from Medborgarplatsen northbound
   const greens = (greenRes.value.departures || []).filter(
-    (d) => C.greenLines.includes(d.line?.id) && d.direction_code === C.greenDirection
+    (d) => notCancelled(d) && C.greenLines.includes(d.line?.id) && d.direction_code === C.greenDirection
   );
 
   // Red line from Slussen northbound
   const reds = (redRes.value.departures || []).filter(
-    (d) => C.redLines.includes(d.line?.id) && d.direction_code === C.redDirection
+    (d) => notCancelled(d) && C.redLines.includes(d.line?.id) && d.direction_code === C.redDirection
   );
 
   // 206/21 from Ropsten towards Lidingö
   const lidingo = (ropstenRes.value.departures || []).filter(
-    (d) => C.ropsten.lines.includes(d.line?.id) && C.ropsten.directions.includes(d.direction_code)
+    (d) => notCancelled(d) && C.ropsten.lines.includes(d.line?.id) && C.ropsten.directions.includes(d.direction_code)
   );
 
   // Bus 76 from Medborgarplatsen towards Ropsten
   const buses76 = (greenRes.value.departures || []).filter(
-    (d) => d.line?.id === C.bus76Line && d.direction_code === C.bus76Direction
+    (d) => notCancelled(d) && d.line?.id === C.bus76Line && d.direction_code === C.bus76Direction
   );
 
   const connections = [];
@@ -304,6 +308,7 @@ async function fetchSourceDepartures(source) {
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
   return (data.departures || []).filter((dep) =>
+    dep.journey?.state !== 'CANCELLED' && dep.state !== 'CANCELLED' &&
     source.lines.includes(dep.line?.id) &&
     (!source.directions || source.directions.includes(dep.direction_code)) &&
     minutesUntil(dep) <= MAX_MINUTES
