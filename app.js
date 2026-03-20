@@ -405,7 +405,7 @@ function renderDeparture(dep) {
   if (isNow) {
     timeHtml = `<span class="time now">Nu</span><span class="time"${timeStyle}>${depClock}</span>`;
   } else {
-    timeHtml = `<span class="time-min${pulseClass}"${timeStyle}>${Math.round(mins)} min</span><span class="time${pulseClass}"${timeStyle}>${depClock}</span>`;
+    timeHtml = `<span class="time-min${pulseClass}"${timeStyle}>${Math.round(effectiveMins)} min</span><span class="time${pulseClass}"${timeStyle}>${depClock}</span>`;
   }
 
   return `
