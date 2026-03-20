@@ -364,22 +364,24 @@ function renderDeparture(dep) {
 
   // Calculate departure clock time and minutes
   const mins = minutesUntil(dep);
+  const buffer = config.bufferMinutes || 0;
+  const effectiveMins = mins - buffer;
   let depClock;
   const timeMatch = dep.display.match(/^(\d{1,2}):(\d{2})$/);
   if (timeMatch) {
-    depClock = dep.display;
+    const [, h, m] = timeMatch;
+    const actual = new Date();
+    actual.setHours(parseInt(h), parseInt(m), 0, 0);
+    const adjusted = new Date(actual.getTime() - buffer * 60000);
+    depClock = `${pad(adjusted.getHours())}:${pad(adjusted.getMinutes())}`;
   } else {
     const now = new Date();
-    const clock = new Date(now.getTime() + mins * 60000);
+    const clock = new Date(now.getTime() + effectiveMins * 60000);
     depClock = `${pad(clock.getHours())}:${pad(clock.getMinutes())}`;
   }
 
   // Detect delay: expected vs scheduled
   const isDelayed = dep.expected && dep.scheduled && new Date(dep.expected) > new Date(dep.scheduled);
-
-  // Urgency color based on effective minutes (accounting for buffer)
-  const buffer = config.bufferMinutes || 0;
-  const effectiveMins = mins - buffer;
   let urgencyColor;
   let shouldPulse = false;
   if (isNow) {
